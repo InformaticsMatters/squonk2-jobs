@@ -15,7 +15,7 @@ name: test-jobs
 env:
   # The version of the im-jote package (https://pypi.org/project/im-jote/) to
   # install and run. Change this in one place to move every matrix leg.
-  JOTE_VERSION: '0.12.0'
+  JOTE_VERSION: '0.13.0'
 
 on:
   push:
