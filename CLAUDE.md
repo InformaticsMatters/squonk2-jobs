@@ -9,6 +9,14 @@ source of its own; instead it gathers all the job-related repositories together
 as git **submodules** so they can be managed independently while this repo acts
 as a convenient single "root" for everything job-related.
 
+## Documentation
+
+The `docs/` directory is the **authoritative** home for all documentation
+relating to Data Manager Jobs — start at `docs/README.md`. Documentation
+lives here; the other repositories (submodules) enforce or follow it and
+must not duplicate it. When documentation needs correcting or extending,
+change it here first.
+
 ## Layout
 
 Each submodule is a separate, independently managed repository. They fall into
