@@ -11,7 +11,7 @@ The Data Manager runs the container as a Kubernetes Pod with the user's
 
 If you prefer to learn from working examples, the
 [squonk2-cdk](https://github.com/InformaticsMatters/squonk2-cdk) repository is
-a compact single-collection example, and
+a compact single-collection example (implemented in Java), and
 [virtual-screening](https://github.com/InformaticsMatters/virtual-screening)
 is the reference multi-manifest repository.
 [squonk2-jaqpot](https://github.com/InformaticsMatters/squonk2-jaqpot) is a
