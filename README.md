@@ -1,5 +1,7 @@
 # squonk2-jobs
 
+[![test-jobs](https://github.com/InformaticsMatters/squonk2-jobs/actions/workflows/test-jobs.yaml/badge.svg)](https://github.com/InformaticsMatters/squonk2-jobs/actions/workflows/test-jobs.yaml)
+
 An **umbrella repository** for the Squonk2 Data Manager **Job** ecosystem.
 It gathers every Job-related repository together as a git submodule and is
 the **authoritative home of all Job documentation**.
