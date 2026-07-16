@@ -1,0 +1,33 @@
+[submodule "virtual-screening"]
+	path = virtual-screening
+	url = git@github.com:InformaticsMatters/virtual-screening.git
+[submodule "squonk2-cdk"]
+	path = squonk2-cdk
+	url = git@github.com:InformaticsMatters/squonk2-cdk.git
+[submodule "squonk2-chemaxon"]
+	path = squonk2-chemaxon
+	url = git@github.com:InformaticsMatters/squonk2-chemaxon.git
+[submodule "squonk2-fragmenstein"]
+	path = squonk2-fragmenstein
+	url = git@github.com:InformaticsMatters/squonk2-fragmenstein.git
+[submodule "squonk2-jaqpot"]
+	path = squonk2-jaqpot
+	url = git@github.com:InformaticsMatters/squonk2-jaqpot.git
+[submodule "squonk2-smartcyp"]
+	path = squonk2-smartcyp
+	url = git@github.com:InformaticsMatters/squonk2-smartcyp.git
+[submodule "squonk2-data-manager-job-decoder"]
+	path = squonk2-data-manager-job-decoder
+	url = git@github.com:InformaticsMatters/squonk2-data-manager-job-decoder.git
+[submodule "squonk2-data-manager-job-utilities"]
+	path = squonk2-data-manager-job-utilities
+	url = git@github.com:InformaticsMatters/squonk2-data-manager-job-utilities.git
+[submodule "squonk2-data-manager-job-tester"]
+	path = squonk2-data-manager-job-tester
+	url = git@github.com:InformaticsMatters/squonk2-data-manager-job-tester.git
+[submodule "squonk2-data-manager-job-operator"]
+	path = squonk2-data-manager-job-operator
+	url = git@github.com:InformaticsMatters/squonk2-data-manager-job-operator.git
+[submodule "squonk2-data-manager-job-operator-ansible"]
+	path = squonk2-data-manager-job-operator-ansible
+	url = git@github.com:InformaticsMatters/squonk2-data-manager-job-operator-ansible.git
