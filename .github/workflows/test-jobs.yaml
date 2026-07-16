@@ -8,8 +8,14 @@ name: test-jobs
 # dry-run validates the Job Definition and Manifest files against the decoder
 # schemas and lint rules without needing Docker or any running containers.
 #
-# jote is installed from PyPI (https://pypi.org/project/im-jote/) so the check
-# always reflects the current tester and schemas.
+# jote is installed from PyPI (https://pypi.org/project/im-jote/) at the version
+# pinned by the JOTE_VERSION variable below, so the check is reproducible; bump
+# that single value to test against a newer tester and its schemas.
+
+env:
+  # The version of the im-jote package (https://pypi.org/project/im-jote/) to
+  # install and run. Change this in one place to move every matrix leg.
+  JOTE_VERSION: '0.12.0'
 
 on:
   push:
@@ -39,7 +45,7 @@ jobs:
         - squonk2-smartcyp
     steps:
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
 
     - name: Checkout the ${{ matrix.repo }} submodule
       run: |
@@ -49,14 +55,14 @@ jobs:
         git submodule update --init -- "${{ matrix.repo }}"
 
     - name: Set up Python
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@v6
       with:
         python-version: '3.10'
 
     - name: Install jote
       run: |
         python -m pip install --upgrade pip
-        pip install im-jote
+        pip install "im-jote==${JOTE_VERSION}"
 
     - name: Dry-run jote against every manifest
       working-directory: ${{ matrix.repo }}
