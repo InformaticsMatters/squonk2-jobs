@@ -31,3 +31,15 @@
 [submodule "squonk2-data-manager-job-operator-ansible"]
 	path = squonk2-data-manager-job-operator-ansible
 	url = git@github.com:InformaticsMatters/squonk2-data-manager-job-operator-ansible.git
+[submodule "squonk2-desc-mordred"]
+	path = squonk2-desc-mordred
+	url = git@github.com:InformaticsMatters/squonk2-desc-mordred.git
+[submodule "squonk2-desc-rdkit"]
+	path = squonk2-desc-rdkit
+	url = git@github.com:InformaticsMatters/squonk2-desc-rdkit.git
+[submodule "squonk2-train-test-split"]
+	path = squonk2-train-test-split
+	url = git@github.com:InformaticsMatters/squonk2-train-test-split.git
+[submodule "squonk2-skl"]
+	path = squonk2-skl
+	url = git@github.com:InformaticsMatters/squonk2-skl.git

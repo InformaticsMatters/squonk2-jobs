@@ -30,6 +30,10 @@ three groups:
 - `squonk2-fragmenstein`
 - `squonk2-jaqpot`
 - `squonk2-smartcyp`
+- `squonk2-desc-mordred`
+- `squonk2-desc-rdkit`
+- `squonk2-train-test-split`
+- `squonk2-skl`
 
 ### Repositories important for job development
 
