@@ -20,6 +20,10 @@ By convention Job repositories carry the `squonk2-jobs` GitHub **Topic**.
 | [squonk2-fragmenstein](https://github.com/InformaticsMatters/squonk2-fragmenstein) | Fragmenstein merges | |
 | [squonk2-jaqpot](https://github.com/InformaticsMatters/squonk2-jaqpot) | Jaqpot models | A good fork-and-run starter (Python, docker-compose build) |
 | [squonk2-smartcyp](https://github.com/InformaticsMatters/squonk2-smartcyp) | SMARTCyp | Default branch is `master` |
+| [squonk2-desc-mordred](https://github.com/InformaticsMatters/squonk2-desc-mordred) | Mordred descriptor generation | |
+| [squonk2-desc-rdkit](https://github.com/InformaticsMatters/squonk2-desc-rdkit) | RDKit descriptor and fingerprint calculation | |
+| [squonk2-train-test-split](https://github.com/InformaticsMatters/squonk2-train-test-split) | Dataset train/test/validation splitting | |
+| [squonk2-skl](https://github.com/InformaticsMatters/squonk2-skl) | scikit-learn hyperparameter optimisation | |
 
 The manifests currently deployed to Informatics Matters installations are
 listed on the DM Wiki's
