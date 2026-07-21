@@ -21,6 +21,7 @@ written here — they must not duplicate it.
 | -------- | -------------- |
 | [Getting Started](getting-started.md) | The end-to-end tutorial: tool → container image → Job Definition → tests → deployment |
 | [Job Definitions](job-definitions.md) | Reference for Job Manifest and Job Definition YAML files |
+| [Nextflow Jobs](nextflow-jobs.md) | Authoring Jobs whose command runs a Nextflow workflow |
 | [Schema Coverage](schema-coverage.md) | Where the Job Definition schema does not yet cover real Job Definitions ("holes") |
 | [Testing Jobs](testing-jobs.md) | Functional testing with `jote`, the Job Tester |
 | [Events and Costs](events-and-costs.md) | Emitting Events and Costs from a Job, and how costs become coin charges |
