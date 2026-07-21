@@ -257,6 +257,24 @@ writes, potentially disturbing execution behaviour.
 > shell execution — `jote` expects to be able to run `nextflow` when
 > executing the corresponding `command` in the Job Definition.
 
+### Matching the Nextflow version
+
+`jote` runs the `nextflow` binary found on your `PATH` — it does **not** use
+the version pinned inside the Job's own `Dockerfile-nextflow`. If your local
+`nextflow` is newer than the one a Job's `.nf` scripts were written for, you
+can get confusing failures (e.g. `Unexpected input: 'addParams'`) that look
+like broken workflows but are really just version skew, not a Job defect.
+
+Before trusting a nextflow test failure, check the `Dockerfile-nextflow` in
+that repository for the pinned release (search for the `nextflow-io/nextflow`
+download URL) and match it locally. If you installed `nextflow` via its
+official install script, the launcher honours `NXF_VER` and will
+transparently download/switch to the requested version:
+
+```bash
+NXF_VER=22.10.0 jote
+```
+
 ## Running jote in CI
 
 Run `jote --dry-run` in CI to validate manifests, definitions and repository
