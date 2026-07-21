@@ -43,3 +43,6 @@
 [submodule "squonk2-skl"]
 	path = squonk2-skl
 	url = git@github.com:InformaticsMatters/squonk2-skl.git
+[submodule "squonk2-rdkit-utilities"]
+	path = squonk2-rdkit-utilities
+	url = git@github.com:InformaticsMatters/squonk2-rdkit-utilities.git

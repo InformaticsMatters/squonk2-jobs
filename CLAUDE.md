@@ -39,6 +39,7 @@ three groups:
 
 - `squonk2-data-manager-job-decoder`
 - `squonk2-data-manager-job-utilities`
+- `squonk2-rdkit-utilities`
 - `squonk2-data-manager-job-tester`
 
 ### Repositories for the Kubernetes Job operator

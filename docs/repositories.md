@@ -59,6 +59,16 @@ A Python package Jobs can import to simplify the generation of **Event**
 lines (`DmLog.emit_event()`) and **Cost** lines (`DmLog.emit_cost()`) —
 see [Events and Costs](events-and-costs.md).
 
+### squonk2-rdkit-utilities
+
+[squonk2-rdkit-utilities](https://github.com/InformaticsMatters/squonk2-rdkit-utilities)
+— PyPI: [`im-rdkit-utilities`](https://pypi.org/project/im-rdkit-utilities/)
+
+A Python package (`rdkit_utils`) of RDKit-specific helpers — molecule
+readers/writers over SDF and delimited-SMILES formats, fragment selection,
+and small molecule-inspection helpers — consolidated from the copies that
+had diverged across several Job repositories.
+
 ### squonk2-data-manager-job-tester
 
 [squonk2-data-manager-job-tester](https://github.com/InformaticsMatters/squonk2-data-manager-job-tester)
