@@ -1,0 +1,16 @@
+# This is an umbrella repository of submodules with no source of its own,
+# so this only needs to cover editor/IDE and OS cruft — not build artifacts,
+# which belong in each submodule's own .gitignore.
+
+# IDE
+.idea/
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor swap/backup files
+*.swp
+*.swo
+*~
