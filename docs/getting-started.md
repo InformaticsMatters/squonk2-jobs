@@ -33,6 +33,10 @@ Job:
   Account Server. For Python, the
   [`im-data-manager-job-utilities`](https://pypi.org/project/im-data-manager-job-utilities/)
   package provides `DmLog.emit_event()` and `DmLog.emit_cost()`.
+- **Import shared helpers rather than copying them.** Molecule readers and
+  writers, the common I/O options, and progress reporting are published in two
+  packages — see [Shared Python Helpers](shared-helpers.md). Job repositories
+  must not carry their own copies.
 - **Create output files with sensible permissions.** Files a Job creates must
   be readable by the Data Manager once the Job completes. The simplest
   approach is to set `fix-permissions: true` in the Job Definition's `image`
