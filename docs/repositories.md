@@ -57,7 +57,9 @@ constrained.
 
 A Python package Jobs can import to simplify the generation of **Event**
 lines (`DmLog.emit_event()`) and **Cost** lines (`DmLog.emit_cost()`) —
-see [Events and Costs](events-and-costs.md).
+see [Events and Costs](events-and-costs.md). It also holds progress
+reporting and the generic file/string helpers — see
+[Shared Python Helpers](shared-helpers.md).
 
 ### squonk2-rdkit-utilities
 
@@ -66,8 +68,9 @@ see [Events and Costs](events-and-costs.md).
 
 A Python package (`rdkit_utils`) of RDKit-specific helpers — molecule
 readers/writers over SDF and delimited-SMILES formats, fragment selection,
-and small molecule-inspection helpers — consolidated from the copies that
-had diverged across several Job repositories.
+small molecule-inspection helpers, and the shared molecule I/O command-line
+options — consolidated from the copies that had diverged across several Job
+repositories. See [Shared Python Helpers](shared-helpers.md).
 
 ### squonk2-data-manager-job-tester
 

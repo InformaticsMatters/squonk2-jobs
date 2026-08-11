@@ -25,6 +25,7 @@ written here — they must not duplicate it.
 | [Schema Coverage](schema-coverage.md) | Where the Job Definition schema does not yet cover real Job Definitions ("holes") |
 | [Testing Jobs](testing-jobs.md) | Functional testing with `jote`, the Job Tester |
 | [Events and Costs](events-and-costs.md) | Emitting Events and Costs from a Job, and how costs become coin charges |
+| [Shared Python Helpers](shared-helpers.md) | The two published helper packages, what belongs in each, and when not to use them |
 | [Versioning](versioning.md) | Versioning Job Definitions and container images safely |
 | [Deploying Jobs](deploying-jobs.md) | Loading manifests into a Data Manager and setting exchange rates |
 | [Architecture](architecture.md) | How the Data Manager runs Jobs (CTW, KEW, MON, input handlers) |
