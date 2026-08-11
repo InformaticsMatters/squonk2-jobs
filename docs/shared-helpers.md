@@ -113,11 +113,18 @@ reader = rdkit_utils.create_reader(
 Keyword arguments cover the variation between Jobs: `output_default`,
 `output_required` and `include_y_column`.
 
-`--infile` and `--outfile` are the **canonical spellings**. `--input` and
+`--infile` and `--outfile` are the **canonical long spellings**. `--input` and
 `--output` are accepted as aliases so that adopting the helper does not break
 existing Job Definitions, and the parsed values are always `args.input` and
-`args.output`. New Job Definitions should use the canonical spellings; the
-aliases will not be kept indefinitely.
+`args.output`. The aliases will not be kept indefinitely.
+
+In a Job Definition's `command` block, prefer the short forms **`-i` and
+`-o`**. They are canonical, they survive the removal of the long aliases, and
+— unlike `--infile`/`--outfile` — they also work against container images
+built *before* the Job adopted the helper. That last point matters more than
+it looks: a Job Definition is loaded against whatever image tag it pins, so a
+definition written with `--infile` fails until an image carrying the migrated
+script is published. Using `-i`/`-o` removes the ordering dependency entirely.
 
 `str_or_int` is the argparse type used for the column options — a column may be
 given as a zero-based index or as a field name.
