@@ -113,10 +113,14 @@ reader = rdkit_utils.create_reader(
 Keyword arguments cover the variation between Jobs: `output_default`,
 `output_required` and `include_y_column`.
 
-`--infile` and `--outfile` are the **canonical long spellings**. `--input` and
-`--output` are accepted as aliases so that adopting the helper does not break
-existing Job Definitions, and the parsed values are always `args.input` and
-`args.output`. The aliases will not be kept indefinitely.
+`--infile` and `--outfile` are the **canonical long spellings**, and the parsed
+values are always `args.input` and `args.output`.
+
+`--input` and `--output` are **deprecated aliases**, kept only so that adopting
+the helper did not break existing Job Definitions. Every Job in this ecosystem
+has since moved off them, and they are due to be removed —
+[`im-rdkit-utilities` issue #5](https://github.com/InformaticsMatters/squonk2-rdkit-utilities/issues/5).
+Do not use them in new code or new Job Definitions.
 
 In a Job Definition's `command` block, prefer the short forms **`-i` and
 `-o`**. They are canonical, they survive the removal of the long aliases, and
