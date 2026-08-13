@@ -32,7 +32,7 @@ env:
   # Job Definition and Manifest schemas jote validates against. Pinned so a
   # decoder release cannot change the meaning of a green build. Bump this
   # deliberately, and expect to fix Job Definitions when you do.
-  DECODER_VERSION: '2.7.0'
+  DECODER_VERSION: '2.8.0'
 
 on:
   push:
