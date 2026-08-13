@@ -11,7 +11,7 @@ name: test-jobs
 # jote is installed from PyPI (https://pypi.org/project/im-jote/) at the version
 # pinned by JOTE_VERSION below. Pinning jote alone is NOT enough to make the
 # check reproducible: the schemas live in the *decoder*, and jote depends on it
-# with an open range ('im-data-manager-job-decoder>=2.6.1'). A decoder release
+# with an open range ('im-data-manager-job-decoder>=2.7.0'). A decoder release
 # therefore changes validation for everybody, immediately, and lands as a
 # failure on whatever unrelated pull request happens to run next.
 #
@@ -26,7 +26,7 @@ name: test-jobs
 env:
   # The version of the im-jote package (https://pypi.org/project/im-jote/) to
   # install and run. Change this in one place to move every matrix leg.
-  JOTE_VERSION: '0.13.0'
+  JOTE_VERSION: '0.14.0'
   # The version of im-data-manager-job-decoder
   # (https://pypi.org/project/im-data-manager-job-decoder/) that carries the
   # Job Definition and Manifest schemas jote validates against. Pinned so a
