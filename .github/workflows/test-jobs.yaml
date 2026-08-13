@@ -9,13 +9,30 @@ name: test-jobs
 # schemas and lint rules without needing Docker or any running containers.
 #
 # jote is installed from PyPI (https://pypi.org/project/im-jote/) at the version
-# pinned by the JOTE_VERSION variable below, so the check is reproducible; bump
-# that single value to test against a newer tester and its schemas.
+# pinned by JOTE_VERSION below. Pinning jote alone is NOT enough to make the
+# check reproducible: the schemas live in the *decoder*, and jote depends on it
+# with an open range ('im-data-manager-job-decoder>=2.6.1'). A decoder release
+# therefore changes validation for everybody, immediately, and lands as a
+# failure on whatever unrelated pull request happens to run next.
+#
+# That is not hypothetical - decoder 2.7.0 (2026-08-13) tightened
+# 'annotation-properties' and broke two unrelated documentation merges. So we
+# pin the decoder too, and bump it deliberately.
+#
+# The scheduled run is the exception: it installs the decoder *unpinned* as a
+# canary, so a release that changes validation is still caught within a week,
+# on a run nobody is waiting on, rather than by ambushing a contributor.
 
 env:
   # The version of the im-jote package (https://pypi.org/project/im-jote/) to
   # install and run. Change this in one place to move every matrix leg.
   JOTE_VERSION: '0.13.0'
+  # The version of im-data-manager-job-decoder
+  # (https://pypi.org/project/im-data-manager-job-decoder/) that carries the
+  # Job Definition and Manifest schemas jote validates against. Pinned so a
+  # decoder release cannot change the meaning of a green build. Bump this
+  # deliberately, and expect to fix Job Definitions when you do.
+  DECODER_VERSION: '2.7.0'
 
 on:
   push:
@@ -64,9 +81,20 @@ jobs:
         python-version: '3.10'
 
     - name: Install jote
+      # On the scheduled run the decoder is left unpinned, so a new release is
+      # caught as a canary. Everywhere else it is pinned, so an unrelated pull
+      # request cannot be failed by someone else's release.
       run: |
         python -m pip install --upgrade pip
-        pip install "im-jote==${JOTE_VERSION}"
+        if [ "${{ github.event_name }}" = "schedule" ]; then
+          echo "Scheduled canary run: installing the latest decoder"
+          pip install "im-jote==${JOTE_VERSION}"
+        else
+          pip install "im-jote==${JOTE_VERSION}" \
+                      "im-data-manager-job-decoder==${DECODER_VERSION}"
+        fi
+        echo "jote    $(pip show im-jote | awk '/^Version:/{print $2}')"
+        echo "decoder $(pip show im-data-manager-job-decoder | awk '/^Version:/{print $2}')"
 
     - name: Dry-run jote against every manifest
       working-directory: ${{ matrix.repo }}
