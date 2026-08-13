@@ -1,0 +1,63 @@
+---
+name: check-image-pins
+
+# Checks every container image pinned by a Job Definition against Docker Hub.
+#
+# Two questions, deliberately weighted differently:
+#
+#   - Does the pinned tag EXIST? If not the Job cannot run. This FAILS the
+#     build. Two 'silicos-it' Jobs pinned a tag that had never been published
+#     and shipped that way for years, in a deployed manifest, because nothing
+#     looked (InformaticsMatters/virtual-screening#31).
+#
+#   - How OLD is the image? A dynamic tag ('latest', 'stable') is re-pulled by
+#     the Data Manager, so a stale one means users are running old code with
+#     nothing to signal it. This only WARNS. Most of the estate is stale today
+#     for reasons that need a decision rather than a commit (#43), so failing
+#     on it would red every build for something nobody can fix in a PR.
+#
+# Set '--fail-on-stale' in the run step once #43 is resolved and the estate is
+# publishing again, to keep it that way.
+#
+# This complements 'test-jobs', which validates Job Definitions against the
+# decoder schema. That check cannot see outside the repository; this one asks
+# whether the outside world still matches what the definitions claim.
+
+on:
+  push:
+    branches:
+    - main
+  pull_request:
+  schedule:
+  # Weekly (Monday 06:40 UTC). The scheduled run is the important one: an image
+  # goes stale, or a tag is deleted, without anything in this repository
+  # changing. Note GitHub disables scheduled workflows after 60 days of
+  # repository inactivity - that is what silently broke 'publish-stable' in
+  # virtual-screening (#41), so if this stops reporting, check it is enabled.
+  - cron: '40 6 * * 1'
+  workflow_dispatch:
+
+jobs:
+  check-image-pins:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v7
+
+    - name: Checkout all Job submodules
+      run: |
+        # The submodules are declared with SSH URLs; rewrite to anonymous
+        # HTTPS so the (public) job repositories can be fetched without a key.
+        git config --global url."https://github.com/".insteadOf "git@github.com:"
+        git submodule update --init
+
+    - name: Set up Python
+      uses: actions/setup-python@v6
+      with:
+        python-version: '3.10'
+
+    - name: Install PyYAML
+      run: pip install pyyaml
+
+    - name: Check every pinned image
+      run: python3 .github/scripts/check_image_pins.py

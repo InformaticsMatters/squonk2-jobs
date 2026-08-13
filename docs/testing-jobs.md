@@ -313,3 +313,39 @@ manifest in the repository.
 
 `--dry-run` validates structure only. To actually execute the tests against
 the branch's code, pair the build step with `--image-tag` as above.
+
+## Checking that pinned images still exist
+
+Schema validation cannot see outside the repository. A Job Definition can pin
+`some/image:stable` perfectly legally when no such tag has ever been published —
+and `jote --dry-run` will pass it, because the definition is well-formed.
+
+That is not hypothetical: two `silicos-it` Jobs pinned
+`3dechem/silicos-it:stable`, a tag that never existed, and shipped that way for
+years in a *deployed* manifest.
+
+The umbrella repository's
+[`check-image-pins`](https://github.com/InformaticsMatters/squonk2-jobs/blob/main/.github/workflows/check-image-pins.yaml)
+workflow closes that gap. It collects every `image.name`/`image.tag` pair across
+all Job repositories and asks Docker Hub two questions:
+
+| Question | If the answer is bad |
+| -------- | -------------------- |
+| Does the tag exist? | **Error** — the Job cannot run |
+| How old is the image behind it? | **Warning** — a dynamic tag that has not moved in over a year means users are running old code |
+
+Staleness only warns, deliberately: much of the estate is stale today for
+reasons that need a decision rather than a commit
+([#43](https://github.com/InformaticsMatters/squonk2-jobs/issues/43)), and
+failing on it would red every build for something no pull request can fix.
+The script takes `--fail-on-stale` for when that changes.
+
+Run it locally against a checked-out umbrella repository:
+
+```bash
+python3 .github/scripts/check_image_pins.py
+python3 .github/scripts/check_image_pins.py --max-age-days 180 --fail-on-stale
+```
+
+It needs only the Job submodules and PyYAML, and makes one anonymous Docker Hub
+request per distinct pin.
