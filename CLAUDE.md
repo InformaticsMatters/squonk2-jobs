@@ -17,6 +17,42 @@ lives here; the other repositories (submodules) enforce or follow it and
 must not duplicate it. When documentation needs correcting or extending,
 change it here first.
 
+### Job versioning
+
+Relevant pages on the (private) Data Manager wiki — they need GitLab access
+to the `squonk2-data-manager` project, so public tooling cannot read them:
+
+- [Job Versioning](https://gitlab.com/informaticsmatters/squonk2-data-manager/-/wikis/job-versioning)
+- [Day 1 Jobs](https://gitlab.com/informaticsmatters/squonk2-data-manager/-/wikis/day-1-jobs)
+  — the manifest URLs actually deployed to Informatics Matters installations
+- [Day 1 Rates](https://gitlab.com/informaticsmatters/squonk2-data-manager/-/wikis/day-1-rates)
+
+**Do not treat the Job Versioning wiki page as a stricter authority than
+`docs/versioning.md`.** It is not: the two are near-identical, and
+`docs/versioning.md` is the better-maintained rewrite. In particular the wiki
+page *permits* the `latest`/`stable` scheme ("as long as you understand the
+risk, that is perfectly fine").
+
+What both documents establish:
+
+- Two version values matter — the Job Definition's **`version`** and the
+  **tag** of its container image. Changing an image means bumping the
+  `version` of **every** Job Definition that uses it.
+- The DM treats `latest` and `stable` as **dynamic** (always re-pulled) and
+  every other tag as **static** (cached per Kubernetes node).
+- Never move a Git tag, reuse a container tag, or remove a repository,
+  manifest or image that is in circulation.
+
+Stricter rules exist that **neither document states** — production Job
+Definitions must not pin `latest`/`stable`; manifests should be loaded from a
+repository **tag**, not a branch; the DM's `DEVELOPMENT` mode is what allows
+definitions to be adjusted or removed. These come from maintainers (see
+[issue #43](https://github.com/InformaticsMatters/squonk2-jobs/issues/43)) and
+are the subject of that issue. Until they are written down, **ask a maintainer
+rather than inferring policy from either the docs or the repositories** — the
+repositories largely follow the permissive documented scheme, which is how the
+divergence arose.
+
 ## Layout
 
 Each submodule is a separate, independently managed repository. They fall into

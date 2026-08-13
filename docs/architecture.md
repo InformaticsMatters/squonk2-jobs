@@ -73,9 +73,12 @@ The Job's Pod is created by the cluster-level
 Job Definition's `image` block controls the container: the project
 directory mount point, working directory, optional memory/cores resource
 guarantees, injected environment variables and files, and the image tag —
-where `latest`/`stable` tags are always re-pulled before execution and any
-other tag is treated as immutable (see
-[Versioning](versioning.md#if-you-have-to-use-latest-image-tags)).
+where `latest`/`stable` tags are treated as *dynamic* and always re-pulled
+before execution, and any other tag is treated as *static* and cached per
+node (see
+[Versioning](versioning.md#how-the-data-manager-treats-image-tags)).
+A dynamic tag is a development convenience: it is designed to change
+underneath a Job, so it gives no reproducibility guarantee.
 
 After a successful run, if the definition sets
 `image.fix-permissions: true`, the DM fixes the permissions of the files

@@ -97,7 +97,9 @@ jote --help
 
 Useful options include `--manifest <file>` to select a manifest,
 `--test <name>` to run a single named test, `--dry-run` to validate without
-executing (handy in CI — see below), and `--allow-no-tests`.
+executing (handy in CI — see below), `--allow-no-tests`, and
+`--image-tag <tag>` to override the tag pinned in the Job Definition
+(see [Testing against the code you just changed](#testing-against-the-code-you-just-changed)).
 
 ### The jote container network
 
@@ -275,6 +277,32 @@ transparently download/switch to the requested version:
 NXF_VER=22.10.0 jote
 ```
 
+## Testing against the code you just changed
+
+`jote` runs each Job against **whatever image tag its Job Definition pins** —
+not against the code in your working tree. That has an uncomfortable
+consequence: a green `jote` run can tell you nothing about the branch you are
+testing.
+
+It has happened. A full post-migration run against `virtual-screening` passed
+50/50 while executing an image built in June 2024, because every definition
+pinned `stable` and `stable` had not been rebuilt since. Not one migrated
+script was exercised. The problem is not specific to stale images — it applies
+to *any* pinned tag, and pinning immutable tags (which you should) makes it
+worse, because then `jote` always tests the last **released** image.
+
+Use `--image-tag` to break the coupling:
+
+```bash
+# build the images from the working tree, then test the definitions against them
+docker build -f Dockerfile-prep -t informaticsmatters/vs-prep:my-branch .
+jote --image-tag my-branch
+```
+
+The Job Definitions keep their production pins; the test run exercises your
+code. Do this in CI as well as locally — build the branch's images, then run
+`jote --image-tag <branch-build-tag>`.
+
 ## Running jote in CI
 
 Run `jote --dry-run` in CI to validate manifests, definitions and repository
@@ -282,3 +310,6 @@ structure on every change without executing containers. The
 [virtual-screening test workflow](https://github.com/InformaticsMatters/virtual-screening/blob/main/.github/workflows/test.yaml)
 is a good example — it runs `jote --manifest <name> --dry-run` for every
 manifest in the repository.
+
+`--dry-run` validates structure only. To actually execute the tests against
+the branch's code, pair the build step with `--image-tag` as above.
