@@ -20,8 +20,18 @@ for every Job found.
 The URL must be the **raw** file URL. For a public GitHub repository:
 
 ```
-https://raw.githubusercontent.com/<org>/<repo>/<branch-or-tag>/data-manager/manifest.yaml
+https://raw.githubusercontent.com/<org>/<repo>/<tag>/data-manager/manifest.yaml
 ```
+
+The reference can be a branch or a tag, but the two are not equivalent. A
+**tag** is a fixed point: reloading the manifest returns the same Job
+Definitions it did last time. A **branch** is not — every reload picks up
+whatever has since been merged, so Job Definitions change under a deployed
+installation without anyone deploying anything. Prefer a tag for anything in
+production; see
+[Versioning — the three static elements](versioning.md#the-three-static-elements)
+and the mode proposal in
+[#43](https://github.com/InformaticsMatters/squonk2-jobs/issues/43).
 
 For a **private GitLab** repository use the GitLab API form and provide a
 [Personal Access Token](https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html)

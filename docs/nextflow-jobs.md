@@ -92,6 +92,10 @@ run-rdock:
     -with-report {{ DM_INSTANCE_DIRECTORY }}/report.html
 ```
 
+> The `tag: 'stable'` above is taken from a real definition and shows
+> **development-mode** pinning. An established Job should pin a fixed tag —
+> see [Versioning](versioning.md).
+
 ### Anatomy of the command
 
 The command is [Jinja2-expanded](job-definitions.md) by the Job Decoder before
@@ -172,8 +176,17 @@ process pharmacophore {
 ```
 
 Because the *process* images carry the science, the controller image stays
-small and rarely changes. Pin process containers to `stable` (or a fixed tag)
-for reproducibility — see [Versioning](versioning.md).
+small and rarely changes.
+
+Pin process containers to a **fixed tag** for reproducibility. `stable` will
+not give you that — the Data Manager treats it as a dynamic tag and re-pulls
+it, so a process pinned to `stable` can change behaviour between runs with
+nothing to signal it. Use `latest` or `stable` only while the Job is still in
+development — see [Versioning](versioning.md).
+
+Note that these images are pulled by *Nextflow*, not by the DM, so the
+`imagePullPolicy` reasoning in [Versioning](versioning.md#how-the-data-manager-treats-image-tags)
+does not apply to them directly — but the reproducibility argument does.
 
 ## nextflow.config
 
