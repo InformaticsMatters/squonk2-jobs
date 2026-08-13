@@ -6,9 +6,14 @@ Job Definition **schema** does not explicitly cover — the "holes" requested by
 
 The schema is the authoritative JSONSchema (draft-07) at
 `squonk2-data-manager-job-decoder/decoder/job-definition-schema.yaml`. Ideally
-it describes the *entire* content of a Job Definition; in practice a handful of
-objects omit `additionalProperties: false`, so unknown keys pass validation
-silently, and one real file uses keys the schema does not model at all.
+it describes the *entire* content of a Job Definition; in practice a few objects
+omit `additionalProperties: false`, so unknown keys pass validation silently.
+
+> **Checked against decoder `2.7.0`** — the version pinned by
+> `DECODER_VERSION` in `.github/workflows/test-jobs.yaml` and vendored as the
+> `squonk2-data-manager-job-decoder` submodule. The schema lives in the decoder,
+> so **the answers here change when the decoder does**; re-run the analysis
+> below after any decoder bump.
 
 ## Method
 
@@ -21,18 +26,27 @@ silently, and one real file uses keys the schema does not model at all.
   to catch keys the schema *silently* accepts because the enclosing object has
   no `additionalProperties: false`.
 
-**Result: 17 of the 18 files fully conform.** Every finding below comes from a
-single file, `virtual-screening/data-manager/moldb.yaml`, but each one exposes a
-genuine gap in what the schema describes.
+**Result: all 18 files validate cleanly — zero errors.** That is an improvement
+on the original survey (17 of 18) but it does not mean the schema now describes
+everything: the remaining holes are *silent* by nature, so a clean run is
+exactly what they produce.
 
 ## Summary of holes
 
-| # | Location in schema | Kind | Real example | Recommendation |
-| - | ------------------ | ---- | ------------ | -------------- |
-| 1 | Top-level object (`properties:`, ~line 15) | Silent — no `additionalProperties: false` | `repository-url`, `repository-tag` (`moldb.yaml:6-7`) | Add `additionalProperties: false`; model or drop the two keys |
-| 2 | `job` object (`definitions.job`, ~line 58) | Silent — no `additionalProperties: false` | `options:` on the job itself in `moldb-count-rows` (`moldb.yaml:113`) | Add `additionalProperties: false` |
-| 3 | `job-option-property` (~line 574) | Hard fail — keys not modelled | `minValue` / `maxValue` (`moldb.yaml:274-275` + 8 more) | Model `minValue`/`maxValue`, or correct jobs to `minimum`/`maximum` |
-| 4 | `checks` (~line 662), `test-checks-output` (~line 715), `value-from` inner objects | Silent — no `additionalProperties: false` | none currently | Add `additionalProperties: false` for consistency |
+| # | Location in schema | Kind | Real example | Status |
+| - | ------------------ | ---- | ------------ | ------ |
+| 1 | Top-level object (`properties:`, line 15) | Silent — no `additionalProperties: false` | `repository-url`, `repository-tag` (`moldb.yaml:6-7`) | **Open** |
+| 2 | `job` object (`definitions.job`, line 58) | Silent — no `additionalProperties: false` | `options:` on the job itself in `moldb-count-rows` | **Open** |
+| 3 | `job-option-property` (line 645) | Hard fail — keys not modelled | `minValue` / `maxValue` in `moldb.yaml` | **Closed** — the Jobs were corrected |
+| 4 | `test-checks-output` (line 820) | Silent — no `additionalProperties: false` | none | **Open** |
+| 4a | `value-from` inner objects (now `environment-value-from-*`) | Silent | none | **Closed** in the decoder |
+| 5 | `annotation-properties` (line 551) | **Explicitly** `additionalProperties: true` | misplaced `derived-from` (see below) | **Closed** in 2.7.0 |
+| 6 | Option `items` (now `job-option-property-items`, line 687) | **Explicitly** `additionalProperties: true` | none | **Closed** in 2.7.0 |
+
+Holes 5 and 6 were not in the original survey. They are a distinct and more
+serious class: those objects did not merely *omit* `additionalProperties`, they
+declared `additionalProperties: true` — free-form by design, so the key-walking
+method had nothing to flag.
 
 ## Details
 
@@ -72,43 +86,79 @@ moldb-count-rows:
 Because the schema accepts the stray key, the misplaced options are silently
 ignored rather than flagged.
 
-### Hole 3 — option `minValue` / `maxValue` are not modelled (hard fail)
+### Hole 3 — option `minValue` / `maxValue` (closed)
 
 `job-option-property` models numeric bounds as `minimum` / `maximum` and *does*
-set `additionalProperties: false`. Several options in `moldb.yaml` instead use
-`minValue` / `maxValue`:
+set `additionalProperties: false`. Several options in `moldb.yaml` used
+`minValue` / `maxValue`, producing the 9 validation errors that made this the
+one *hard* failure in the original survey.
 
-```yaml
-chunk_size:
-  title: Chunk size for splitting
-  type: integer
-  default: 100000
-  minValue: 10000
-  maxValue: 1000000
-```
+**Closed by correcting the Jobs, not the schema.** `moldb.yaml` no longer
+contains `minValue` or `maxValue` anywhere, and `job-option-property` still
+models only `minimum` / `maximum`. Of the two options the original
+recommendation offered, the "fix the Jobs" branch was taken — which is the right
+one, since `minValue`/`maxValue` were never a convention, just a mistake.
 
-This is the one place where a live Job Definition is **rejected** by the schema
-(9 validation errors, see below). The schema needs either to model
-`minValue`/`maxValue` or the job needs correcting to `minimum`/`maximum`.
+### Hole 4 — other objects missing `additionalProperties: false` (partly closed)
 
-### Hole 4 — other objects missing `additionalProperties: false` (latent)
+The four `value-from` inner objects are now `environment-value-from-api-token`,
+`-constant`, `-secret` and `-account-server-asset`, and **all four now set
+`additionalProperties: false`**, as do `test-checks-output-exists` and
+`test-checks-output-linecount`.
 
-For completeness, the same class of silent hole exists in the `checks` object,
-`test-checks-output`, and the four `value-from` inner objects (`api-token`,
-`constant`, `secret`, `account-server-asset`). No current Job exploits these,
-but they would accept unknown keys just like holes 1 and 2.
+**One remains open:** `test-checks-output` (line 820), whose `checks` and `name`
+properties sit in an object that still accepts unknown keys. There is no
+separate `checks` object — the original survey's reference to one was really to
+this object's `checks` property.
+
+### Holes 5 and 6 — the free-form objects closed by decoder 2.7.0
+
+Two objects were declared `additionalProperties: true`. That is worse than
+omitting the keyword: it is an explicit statement that anything goes, so no
+amount of key-walking will flag content inside them. Decoder **2.7.0**
+(released 2026-08-13) replaced both with modelled definitions:
+
+| Was | Now | New sub-definitions |
+| --- | --- | ------------------- |
+| `annotation-properties: {additionalProperties: true}` | `annotation-properties` with `additionalProperties: false` | `fields-descriptor-annotation`, `fields-descriptor-field`, `service-execution-annotation` |
+| option `items: {additionalProperties: true}` | `job-option-property-items` with `additionalProperties: false` | `job-option-property-items-choice` |
+
+**Closing hole 5 immediately found a real bug.** `similarity-screen-rdkit` in
+`virtual-screening/data-manager/rdkit.yaml` had `derived-from` nested one level
+too deep, inside `fields-descriptor` rather than alongside it under
+`annotation-properties` — an indentation slip that had been invisible for as
+long as the block was free-form. The output had been shipping a
+`fields-descriptor` with a stray key and no `derived-from` annotation at all.
+Fixed in
+[virtual-screening#30](https://github.com/InformaticsMatters/virtual-screening/pull/30).
+
+This is the central argument of this document, demonstrated: a silently
+permissive schema does not mean the Job Definitions are correct, only that
+nobody is checking.
+
+It also arrived as an unrelated CI failure, because the decoder was an unpinned
+transitive dependency of `jote`. It is now pinned — see the note at the top of
+this page, and #48.
 
 ## Recommended schema extensions
 
-1. Add `additionalProperties: false` to the **top-level object** and the **`job`
-   object** (holes 1, 2) — and, for consistency, to the objects in hole 4.
-2. Decide the intent of `minValue` / `maxValue` (hole 3): either add them to
-   `job-option-property` or fix `moldb.yaml` to use `minimum` / `maximum`.
-3. Decide the intent of `repository-url` / `repository-tag` (hole 1): either add
+1. Add `additionalProperties: false` to the **top-level object** (hole 1), the
+   **`job` object** (hole 2), and **`test-checks-output`** (hole 4). These are
+   the only object definitions in the schema that still lack it.
+2. Decide the intent of `repository-url` / `repository-tag` (hole 1): either add
    them to the top-level object or remove them from `moldb.yaml`.
+3. Fix the misplaced `options:` block on `moldb-count-rows` (hole 2), which is
+   silently ignored today. Closing hole 2 would turn it into a hard failure, so
+   the Job should be corrected first — the sequencing that holes 5 and 6 showed
+   matters.
 
 Schema changes live in the `squonk2-data-manager-job-decoder` submodule and must
 be made there via its own pull request; this document only reports the holes.
+
+Note the lesson from 2.7.0 for whoever does the above: closing a hole can fail
+Job Definitions that have been passing for years, and — because the decoder is
+shared — it does so for everybody at once. Pair each closure with a survey of
+what it would newly reject, and land the Job fixes first.
 
 ## Reproducing the analysis
 
@@ -127,19 +177,40 @@ for f in sorted(files):
         print(f, list(e.path), '|', e.message)
 ```
 
-The only file that produces output is `moldb.yaml`:
+Against decoder 2.7.0 this now produces **no output at all** — all 18 files
+validate. (Before hole 3 was closed it printed 9 errors, all from `moldb.yaml`,
+all `minValue`/`maxValue`.)
+
+A clean run is not evidence of coverage. The remaining holes are silent by
+definition, so listing the objects that still accept unknown keys is the more
+useful check:
+
+```python
+import yaml
+schema = yaml.safe_load(open(
+    'squonk2-data-manager-job-decoder/decoder/job-definition-schema.yaml'))
+if 'additionalProperties' not in schema:
+    print('root object')
+for name, obj in sorted(schema['definitions'].items()):
+    if (isinstance(obj, dict) and obj.get('type') == 'object'
+            and 'properties' in obj and 'additionalProperties' not in obj):
+        print(name)
+```
+
+Which currently reports exactly three — the three in the recommendations above:
 
 ```
-moldb.yaml ['jobs', 'moldb-calc-props', 'variables', 'options', 'properties', 'chunk_size'] | Additional properties are not allowed ('maxValue', 'minValue' were unexpected)
-moldb.yaml ['jobs', 'moldb-calc-props', 'variables', 'options', 'properties', 'count'] | Additional properties are not allowed ('maxValue' was unexpected)
-moldb.yaml ['jobs', 'moldb-enumerate-mols', 'variables', 'options', 'properties', 'chunk_size'] | Additional properties are not allowed ('maxValue', 'minValue' were unexpected)
-moldb.yaml ['jobs', 'moldb-enumerate-mols', 'variables', 'options', 'properties', 'count'] | Additional properties are not allowed ('maxValue' was unexpected)
-moldb.yaml ['jobs', 'moldb-extract-confs', 'variables', 'options', 'properties', 'count'] | Additional properties are not allowed ('maxValue' was unexpected)
-moldb.yaml ['jobs', 'moldb-extract-enums', 'variables', 'options', 'properties', 'count'] | Additional properties are not allowed ('maxValue' was unexpected)
-moldb.yaml ['jobs', 'moldb-gen-confs', 'variables', 'options', 'properties', 'chunk_size'] | Additional properties are not allowed ('maxValue', 'minValue' were unexpected)
-moldb.yaml ['jobs', 'moldb-gen-confs', 'variables', 'options', 'properties', 'count'] | Additional properties are not allowed ('maxValue' was unexpected)
-moldb.yaml ['jobs', 'moldb-load-library', 'variables', 'options', 'properties', 'chunk_size'] | Additional properties are not allowed ('maxValue', 'minValue' were unexpected)
+root object
+job
+test-checks-output
 ```
 
-The silent holes (1, 2, 4) produce **no** validation errors — that is precisely
-why they are holes.
+Also worth grepping for the free-form class that holes 5 and 6 belonged to,
+since it is invisible to both checks:
+
+```bash
+grep -n 'additionalProperties: true' \
+    squonk2-data-manager-job-decoder/decoder/job-definition-schema.yaml
+```
+
+This currently returns nothing.
