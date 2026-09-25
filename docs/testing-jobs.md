@@ -31,8 +31,9 @@ confidence that Jobs are basically fit for purpose before deployment —
 pip install im-jote
 ```
 
-It is a Python 3 utility (ideally use Python 3.10 or later). You will also
-need [Docker](https://docs.docker.com/get-docker/) and `docker-compose`
+It is a Python 3 utility (use Python 3.12 or later — that is what the Job
+repositories build and test against). You will also need
+[Docker](https://docs.docker.com/get-docker/) and `docker-compose`
 (v1 or v2), and — only if you test nextflow Jobs —
 [nextflow](https://www.nextflow.io/).
 
@@ -274,8 +275,13 @@ official install script, the launcher honours `NXF_VER` and will
 transparently download/switch to the requested version:
 
 ```bash
-NXF_VER=22.10.0 jote
+NXF_VER=26.04.6 jote
 ```
+
+26.04.6 is the release currently pinned by both repositories that carry
+nextflow Jobs — `virtual-screening` and `squonk2-fragmenstein`. Check the
+`Dockerfile-nextflow` rather than trusting this number: it is the pin that is
+authoritative, not the documentation.
 
 ## Testing against the code you just changed
 
