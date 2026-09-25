@@ -263,25 +263,21 @@ writes, potentially disturbing execution behaviour.
 ### Matching the Nextflow version
 
 `jote` runs the `nextflow` binary found on your `PATH` — it does **not** use
-the version pinned inside the Job's own `Dockerfile-nextflow`. If your local
-`nextflow` is newer than the one a Job's `.nf` scripts were written for, you
-can get confusing failures (e.g. `Unexpected input: 'addParams'`) that look
-like broken workflows but are really just version skew, not a Job defect.
+the version pinned inside the Job's own `Dockerfile-nextflow`, and it records
+nothing about which version it ran, so a run's own output cannot tell you
+afterwards. Set the version deliberately.
 
-Before trusting a nextflow test failure, check the `Dockerfile-nextflow` in
-that repository for the pinned release (search for the `nextflow-io/nextflow`
-download URL) and match it locally. If you installed `nextflow` via its
-official install script, the launcher honours `NXF_VER` and will
-transparently download/switch to the requested version:
+Both repositories that carry nextflow Jobs — `virtual-screening` and
+`squonk2-fragmenstein` — pin **26.04.6**, and their workflows are written for
+the strict syntax parser that Nextflow 25 and later use. If you installed
+`nextflow` via its official install script, the launcher honours `NXF_VER`:
 
 ```bash
 NXF_VER=26.04.6 jote
 ```
 
-26.04.6 is the release currently pinned by both repositories that carry
-nextflow Jobs — `virtual-screening` and `squonk2-fragmenstein`. Check the
-`Dockerfile-nextflow` rather than trusting this number: it is the pin that is
-authoritative, not the documentation.
+Check the `Dockerfile-nextflow` in the repository rather than trusting this
+number: the pin is authoritative, not the documentation.
 
 ## Testing against the code you just changed
 

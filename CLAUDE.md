@@ -112,8 +112,8 @@ then commit the updated submodule pointer here.
 - Make changes to job code inside the relevant submodule, not here — this repo
   only tracks which commit of each submodule is current.
 - Never commit directly to `main` (or any default branch); open a pull request.
-- Before running `jote` against a Nextflow-type Job, match your local
-  `nextflow` version to the one pinned in that submodule's
-  `Dockerfile-nextflow` — see [Matching the Nextflow version](docs/testing-jobs.md#matching-the-nextflow-version).
-  Using the wrong version produces failures that look like broken workflows
-  but are actually just version skew.
+- Before running `jote` against a Nextflow-type Job, set `NXF_VER` to the
+  version pinned in that submodule's `Dockerfile-nextflow` (26.04.6 in both
+  repositories that have one) — see
+  [Matching the Nextflow version](docs/testing-jobs.md#matching-the-nextflow-version).
+  `jote` runs whatever `nextflow` is on `PATH` and records nothing about it.
