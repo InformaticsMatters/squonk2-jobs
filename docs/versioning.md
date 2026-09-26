@@ -120,24 +120,39 @@ guarantee, and pinning one does not make a Job repeatable.
 ## Using `latest` and `stable` during development
 
 To avoid the ceremony of semantic image tags while a Job is still moving, you
-can adopt a **`latest`/`stable`** tagging strategy.
+can adopt a **`latest`/`stable`** tagging strategy. The two tags have distinct
+meanings, and every Job repository should apply them the same way:
 
-During development you rebuild and publish a new `latest` image every time you
-change the implementation. Because the DM re-pulls dynamic tags, you do not
-have to change Job versions while iterating — which is the whole point.
+| Tag | Means | Built when |
+| --- | ----- | ---------- |
+| `latest` | The tip of the repository's default branch — the newest, probably unstable, code. | On every commit to the default branch, ideally only commits that change what goes into the container. |
+| `stable` | The most recent tagged release — code someone deliberately released. | When a release is cut, and only then. |
 
-When the Job is ready for release, change the Job's `version` and publish a
-new image with the `stable` tag. You are declaring that `latest` is genuinely
-the latest (probably unstable) code, while `stable` represents tested,
-significant changes you are happy for others to use.
+The release build publishes the immutable version tag (e.g. `1.2.0`) and
+`stable` together, from the same build, so `stable` *is* the released image
+rather than a separate rebuild that happens to be close to it.
+
+During development, `latest` is rebuilt as you change the implementation.
+Because the DM re-pulls dynamic tags, you do not have to change Job versions
+while iterating — which is the whole point. When the Job is ready for release,
+change the Job's `version`, cut the release, and `stable` moves with it. You
+are declaring that `latest` is genuinely the newest (probably unstable) code,
+while `stable` represents tested, significant changes you are happy for others
+to use.
 
 The trade-off is explicit: you gain iteration speed and lose reproducibility.
 Every Job pinning a dynamic tag will change behaviour whenever that tag is
 republished, with no Job version change to signal it and nothing for a user to
-observe.
+observe. `stable` moves less often than `latest`, but it still moves.
 
-`squonk2-jaqpot`'s `main` branch is an example of a repository working this
-way today.
+> [!NOTE]
+> **Target, not yet the reality — tracked in
+> [#85](https://github.com/InformaticsMatters/squonk2-jobs/issues/85).**
+> Only `squonk2-fragmenstein` publishes `latest` and `stable` this way today.
+> In most other Job repositories `stable` is built from the tip of `main`
+> (and nightly), and `latest` is keyed to a `staging` branch that often does
+> not exist, so it is rarely or never published. Do not assume a repository
+> follows this table until #85 is closed; check its workflows and Docker Hub.
 
 ## A conformant example
 
