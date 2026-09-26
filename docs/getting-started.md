@@ -82,9 +82,12 @@ Hub as `informaticsmatters/<repository-name>`).
 - Do not rely on a specific user id; the DM runs the container with the
   project directory mounted and a working directory set from the Job
   Definition.
-- Build and publish images with CI. While a Job is still moving, publishing
-  `:latest` on every push keeps iteration cheap. Once it is established,
-  publish **immutable version tags** and pin those — see
+- Build and publish images with CI. While a Job is still moving, publish
+  `:latest` from every commit to the default branch that changes the image,
+  and `:stable` when you cut a release, so `stable` is the latest tagged
+  release. That keeps iteration cheap. Once the Job is established, publish
+  **immutable version tags** (the release build can push the version tag and
+  `stable` together) and pin those — see
   [Versioning](versioning.md), which covers the trade-off and the two modes a
   Job repository can operate in.
 
@@ -230,8 +233,9 @@ When your Job works, protect it: pin the container image to an immutable tag
 and set the Job's `version`. Whenever the image content changes, publish a
 new tag and bump the version of **every** Job that uses the image. The rules
 are in [Versioning](versioning.md), along with the lighter-weight
-`latest`/`stable` strategy — which is a **development-only** convenience, not
-a shortcut available once the Job is in circulation.
+`latest`/`stable` strategy (`latest` is the tip of the default branch,
+`stable` the most recent tagged release) — which is a **development-only**
+convenience, not a shortcut available once the Job is in circulation.
 
 ## 6. Deploy it
 
